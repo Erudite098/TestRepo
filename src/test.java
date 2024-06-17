@@ -1,20 +1,25 @@
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class test extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
+	private JTextField txtFieldUserName;
+	private JPasswordField passFieldLogin;
 
 	/**
 	 * Launch the application.
@@ -43,59 +48,52 @@ public class test extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		textField = new JTextField();
-		textField.setBounds(226, 111, 96, 19);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setBounds(226, 155, 96, 21);
-		contentPane.add(btnNewButton);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(372, 111, 96, 19);
-		contentPane.add(textField_1);
-		
-		JButton btnNewButton_1 = new JButton("New button");
-		btnNewButton_1.setBounds(372, 155, 96, 21);
-		contentPane.add(btnNewButton_1);
-		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(93, 111, 96, 19);
-		contentPane.add(textField_2);
-		
-		JButton btnNewButton_2 = new JButton("New button");
-		btnNewButton_2.setBounds(93, 155, 96, 21);
-		contentPane.add(btnNewButton_2);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(93, 242, 96, 19);
-		contentPane.add(textField_3);
-		
-		JButton btnNewButton_3 = new JButton("New button");
-		btnNewButton_3.setBounds(93, 286, 96, 21);
-		contentPane.add(btnNewButton_3);
-		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(226, 242, 96, 19);
-		contentPane.add(textField_4);
-		
-		JButton btnNewButton_4 = new JButton("New button");
-		btnNewButton_4.setBounds(226, 286, 96, 21);
-		contentPane.add(btnNewButton_4);
-		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(372, 242, 96, 19);
-		contentPane.add(textField_5);
-		
-		JButton btnNewButton_5 = new JButton("New button");
-		btnNewButton_5.setBounds(372, 286, 96, 21);
-		contentPane.add(btnNewButton_5);
+
+		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String username = txtFieldUserName.getText();
+				String password = new String(passFieldLogin.getPassword());
+				if (authenticate(username, password)) {
+					// Proceed to main application
+				} else {
+					JOptionPane.showMessageDialog(null, "Invalid credentials");
+				}
+			}
+		});
+
+		btnLogin.setBounds(203, 166, 96, 21);
+		contentPane.add(btnLogin);
+
+		txtFieldUserName = new JTextField();
+		txtFieldUserName.setColumns(10);
+		txtFieldUserName.setBounds(203, 82, 200, 30);
+		contentPane.add(txtFieldUserName);
+
+		JLabel lblUserName = new JLabel("UserName");
+		lblUserName.setBounds(203, 65, 125, 15);
+		contentPane.add(lblUserName);
+
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setBounds(203, 111, 70, 15);
+		contentPane.add(lblPassword);
+
+		passFieldLogin = new JPasswordField();
+		passFieldLogin.setBounds(203, 124, 200, 30);
+		contentPane.add(passFieldLogin);
+	}// end frame
+
+	private boolean authenticate(String username, String password) {
+		try (Connection connection = DatabaseConnection.getConnection()) {
+			String query = "SELECT * FROM User WHERE username = ? AND password = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setString(1, username);
+			statement.setString(2, password);
+			ResultSet resultSet = statement.executeQuery();
+			return resultSet.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
