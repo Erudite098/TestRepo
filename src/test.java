@@ -13,13 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import net.proteanit.sql.DbUtils;
-
-
 
 public class test extends JFrame {
 
@@ -42,53 +41,46 @@ public class test extends JFrame {
 			}
 		});
 	}
-	
+
 	public test() {
 		testMe();
 		Connect();
 		table_load();
 	}
-	
+
 	Connection con;
 	PreparedStatement pst;
 	ResultSet rs;
 	private JTable table;
 	private JTextField textfullname;
-	
+
 	public void Connect() {
 		try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/infoman", "root","");
-        }
-        catch (ClassNotFoundException ex) 
-        {
-          ex.printStackTrace();
-        }
-        catch (SQLException ex) 
-        {
-           ex.printStackTrace();
-        }
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost/infoman", "root", "");
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
-	
-	public void table_load(){
-	    try {
-	    	pst = con.prepareStatement("select * from employee");
-	    	rs = pst.executeQuery();
-	    	table.setModel(DbUtils.resultSetToTableModel(rs));
-	    } 
-	    catch (SQLException e) {
-	        e.printStackTrace();
-	    } 
+
+	public void table_load() {
+		try {
+			pst = con.prepareStatement("select * from employee");
+			rs = pst.executeQuery();
+			table.setModel(DbUtils.resultSetToTableModel(rs));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
 
 	/**
 	 * Create the frame.
 	 */
 	private void testMe() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 833, 638);
+		setBounds(100, 100, 833, 261);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -99,63 +91,63 @@ public class test extends JFrame {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String surname, fullname;
-			    surname = txtsurname.getText();
-			    fullname = textfullname.getText();
-	
-			                
-			     try {
-			        pst = con.prepareStatement("insert into employee(surname, fullname)values(?,?)");
-			        pst.setString(1, surname);
-			        pst.setString(2, fullname);
-			
-			        pst.executeUpdate();
-			        JOptionPane.showMessageDialog(null, "Record Addedddd!!!!!");
-			        table_load();
-			                       
-			        txtsurname.setText("");
-			        textfullname.setText("");
+				surname = txtsurname.getText();
+				fullname = textfullname.getText();
+
+				try {
+					pst = con.prepareStatement("insert into employee(surname, fullname)values(?,?)");
+					pst.setString(1, surname);
+					pst.setString(2, fullname);
+
+					pst.executeUpdate();
+					JOptionPane.showMessageDialog(null, "Record Addedddd!!!!!");
+					table_load();
+
+					txtsurname.setText("");
+					textfullname.setText("");
 //			        txtPrice.setText("");
-			        txtsurname.requestFocus();
-			       }
-			    catch (SQLException e1) 
-			        {            
-			       e1.printStackTrace();
-			    }
+					txtsurname.requestFocus();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
-		btnAdd.setBounds(203, 291, 96, 21);
+		btnAdd.setBounds(12, 209, 96, 21);
 		contentPane.add(btnAdd);
 
 		txtsurname = new JTextField();
 		txtsurname.setColumns(10);
-		txtsurname.setBounds(203, 51, 200, 30);
+		txtsurname.setBounds(12, 46, 200, 30);
 		contentPane.add(txtsurname);
 
 		JLabel lblUserName = new JLabel("UserName");
-		lblUserName.setBounds(203, 34, 125, 15);
+		lblUserName.setBounds(12, 29, 125, 15);
 		contentPane.add(lblUserName);
 
 		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(203, 199, 70, 15);
+		lblPassword.setBounds(12, 141, 70, 15);
 		contentPane.add(lblPassword);
 
 		passFieldLogin = new JPasswordField();
-		passFieldLogin.setBounds(203, 224, 200, 30);
+		passFieldLogin.setBounds(12, 166, 200, 30);
 		contentPane.add(passFieldLogin);
-		
-		table = new JTable();
-		table.setBounds(160, 397, 381, 120);
-		contentPane.add(table);
-		
+
 		textfullname = new JTextField();
 		textfullname.setColumns(10);
-		textfullname.setBounds(203, 108, 200, 30);
+		textfullname.setBounds(12, 103, 200, 30);
 		contentPane.add(textfullname);
-		
+
 		JLabel lblUserName_1 = new JLabel("UserName");
-		lblUserName_1.setBounds(203, 91, 125, 15);
+		lblUserName_1.setBounds(12, 86, 125, 15);
 		contentPane.add(lblUserName_1);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(227, 46, 594, 184);
+		contentPane.add(scrollPane);
+
+		table = new JTable();
+		scrollPane.setViewportView(table);
 	}// end frame
 
 	private boolean authenticate(String username, String password) {
